@@ -20,7 +20,7 @@
           <h1>Ejercicio practico Web II</h1>
         </div>
       </div>
-      <div class="row">
+      <div class="row my-2">
         <div class="col-4">
           <form name="fcantuser" onsubmit="return validadCantUser()" class="input-group py-2">
             <div class="input-group-text">cantidad de usuarios</div>
@@ -29,9 +29,9 @@
           </form>
         </div>
         <div class="col-4">
-          <form name="fregistrotiempo" onsubmit="return filtrarporañio()" class="input-group py-2">
+          <form name="fregistrotiempo" onsubmit="return validadUserRegistroTiempo()" class="input-group py-2">
             <div class="input-group-text">Registrado hace mas de :</div>
-            <input type="number" class="form-control" id="registiempo" placeholder="minimo uno" />
+            <input type="number" class="form-control" id="registiempo" placeholder="minimo cero" />
             <button class="btn btn-danger" type="submit">Filtrar</button>
           </form>
         </div>
@@ -47,18 +47,20 @@
           </div>
         </div>
       </div>
-      <table class="table align-middle mb-0 bg-white">
+      <table class="table align-middle mt-1 mb-0 bg-white">
         <thead class="bg-light">
           <tr>
-            <th class="col-6">Usuarios masculinos 
-              <button type="button" class="btn btn-success"
-              onclick="ordenarPorApellidoYNombreALosUsuarios('male')"
-              >Ordenar por apellido y nombre </button>
+            <th class="col-6 fs-3">
+              Usuarios masculinos
+              <button type="button" class="btn btn-success" onclick="ordenarPorApellidoYNombreALosUsuarios('male')">
+                Ordenar por apellido y nombre
+              </button>
             </th>
-            <th class="col-6">Usuarios femeninos
-              <button type="button" class="btn btn-success"
-              onclick="ordenarPorApellidoYNombreALosUsuarios('female')"
-              >Ordenar por apellido y nombre </button>
+            <th class="col-6 fs-3">
+              Usuarios femeninos
+              <button type="button" class="btn btn-success" onclick="ordenarPorApellidoYNombreALosUsuarios('female')">
+                Ordenar por apellido y nombre
+              </button>
             </th>
           </tr>
         </thead>
