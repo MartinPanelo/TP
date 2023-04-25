@@ -31,9 +31,7 @@ function validadCantUser() {
   if (formCantUser["cantUser"].value >= 1) {
     formCantUser["cantUser"].classList.add("is-valid");
     formCantUser["cantUser"].classList.remove("is-invalid");
-    CargaDeUsers();
-
-    // cargarUser();  // en caso de ser valido
+    CargaDeUsers(); // se hace el pedido a la API
   } else {
     formCantUser["cantUser"].classList.add("is-invalid");
     formCantUser["cantUser"].classList.remove("is-valid");
@@ -51,20 +49,18 @@ function popover() {
 function listarusers(regis) {
   let posM = 0;
   let posF = 0;
-
+  elementosdetabla.innerHTML = ``;
   let cantFilas = Math.max(
     regis.filter((item) => item.genero == "male").length,
     regis.filter((item) => item.genero == "female").length
   );
-
-  elementosdetabla.innerHTML = ``;
   for (let i = 0; i < cantFilas; i++) {
     elementosdetabla.innerHTML += `<tr>
-    <td id="M+${i}"></td>
-    <td id="F+${i}"></td>
-  </tr>`;
+      <td id="M+${i}"></td>
+      <td id="F+${i}"></td>
+    </tr>`;
   }
-
+  /////////////////////////////////////
   regis.forEach((UnaPersona) => {
     if (UnaPersona.genero == "male") {
       document.getElementById("M+" + posM).innerHTML = itemCreacion(UnaPersona) + document.getElementById("M+" + posM).innerHTML;
@@ -74,9 +70,10 @@ function listarusers(regis) {
       posF += 1;
     }
   });
-  popover();
+  popover(); // cada ves que modifico el DOM refresco la lista <popoverList>
 }
 function itemCreacion(UnaPersona) {
+  // funcion para crear cada tarjeta de user
   return `<div id="${UnaPersona.id}" class=" d-flex align-items-center">
             <img
               data-bs-trigger="hover focus"
@@ -90,7 +87,7 @@ function itemCreacion(UnaPersona) {
                 <li>Años de registro : ${UnaPersona.anioRegistro}</li>
                 <li>Pais : ${UnaPersona.pais}</li>
               </ol>" 
-              title=" ${UnaPersona.titulo} ${UnaPersona.apellido} ${UnaPersona.nombre}"
+              title="👤 ${UnaPersona.titulo} ${UnaPersona.apellido} ${UnaPersona.nombre}"
               src="${UnaPersona.imagen}"          
               class="rounded-circle
               border border-3 ${colores[getRandomInt(6)]}"
@@ -108,7 +105,7 @@ function itemCreacion(UnaPersona) {
 async function CargaDeUsers() {
   registro.length = 0;
 
-  let cant = document.getElementById("cantUser").value;
+  let cant = document.getElementById("cantUser").value; // cantidad de user solicitados
 
   const response = await fetch(URLAPI + cant);
   const datos = await response.json();
@@ -137,9 +134,9 @@ async function CargaDeUsers() {
     }
     return 0;
   });
-  listarusers(registro);
+  listarusers(registro); // muestro en el DOM los usuarios
 
-  cargarCombo();
+  cargarCombo(); // cargo el combobox con las nacionalidades
   /////////////////////////////////////////////////////
 }
 
@@ -153,6 +150,11 @@ function filtrarAnioCombo(pais = paisCombo) {
 }
 
 function borrarUser(id) {
+  /*   1) borro del registro al user a través del ID
+  2) aplico los filtro (por tiempo de registro /nacionalidad)
+  3) listo en el DOM la nueva lista de usuarios 
+  4) actualizo la lista <popoverList> 
+  5) actualizo el combobox de nacionalidades */
   registro = registro.filter((persona) => persona.id != id);
   filtrarAnioCombo();
   cargarCombo();

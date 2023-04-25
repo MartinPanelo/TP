@@ -7,3 +7,10 @@ ol li:nth-child(2) {
 ol li:nth-child(3) {
   list-style-type: "🌍";
 }
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
