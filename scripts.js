@@ -17,7 +17,7 @@ function validadUserRegistroTiempo() {
   if (formregistrotiempo["registiempo"].value >= 0) {
     formregistrotiempo["registiempo"].classList.add("is-valid");
     formregistrotiempo["registiempo"].classList.remove("is-invalid");
-    filtrarporañio();
+    filtrarAnioCombo();
 
     // cargarUser();  // en caso de ser valido
   } else {
@@ -59,7 +59,7 @@ function listarusers(regis) {
 
   elementosdetabla.innerHTML = ``;
   for (let i = 0; i < cantFilas; i++) {
-    elementosdetabla.innerHTML += `<tr ">
+    elementosdetabla.innerHTML += `<tr>
     <td id="M+${i}"></td>
     <td id="F+${i}"></td>
   </tr>`;
@@ -67,70 +67,44 @@ function listarusers(regis) {
 
   regis.forEach((UnaPersona) => {
     if (UnaPersona.genero == "male") {
-      document.getElementById("M+" + posM).innerHTML = `
-        <div id="${UnaPersona.id}" class=" d-flex align-items-center">
-          <img
-            data-bs-trigger="hover focus"
-            data-bs-container="body"
-            data-bs-toggle="popover"
-            data-bs-placement="right"
-            data-bs-html="true"
-            data-bs-content="
-            <ol>
-              <li>Telefono : ${UnaPersona.telefono}</li>
-              <li>Años de registro : ${UnaPersona.anioRegistro}</li>
-              <li>Pais : ${UnaPersona.pais}</li>
-            </ol>" 
-
-            title=" ${UnaPersona.titulo} ${UnaPersona.apellido} ${UnaPersona.nombre}"
-            src="${UnaPersona.imagen}"          
-            class="rounded-circle
-            border border-3 ${colores[getRandomInt(6)]}"
-          />
-          <div class="ms-3 col-5">
-            <h4 class="fw-bold mb-1">${UnaPersona.titulo} ${UnaPersona.nombre}</h4>
-            <p class="text-muted mb-0">${UnaPersona.mail}</p>
-            
-          </div>
-          <div class="ms-3">
-          <button type="button" class="btn btn-danger " onclick="borrarUser('${UnaPersona.id}')">Borrar</button>
-          </div>
-        </div>`;
-      +document.getElementById("M+" + posM).innerHTML;
+      document.getElementById("M+" + posM).innerHTML = itemCreacion(UnaPersona) + document.getElementById("M+" + posM).innerHTML;
       posM += 1;
     } else {
-      document.getElementById("F+" + posF).innerHTML += `
-        <div class="d-flex align-items-center">
-          <img
-            data-bs-trigger="hover focus"
-            data-bs-container="body"
-            data-bs-toggle="popover"
-            data-bs-placement="right"
-            data-bs-html="true"
-            data-bs-content=
-            "<ol>
-            <li>Telefono : ${UnaPersona.telefono}</li>
-            <li>Años de registro : ${UnaPersona.anioRegistro}</li>
-            <li>Pais : ${UnaPersona.pais}</li>
-          </ol>" 
-            title="${UnaPersona.titulo} ${UnaPersona.apellido} ${UnaPersona.nombre}"
-            src="${UnaPersona.imagen}"          
-            class="rounded-circle
-            border border-3 ${colores[getRandomInt(6)]}"
-          />
-          <div class="ms-3 col-5">
-            <h4 class="fw-bold mb-1">${UnaPersona.titulo} ${UnaPersona.nombre}</h4>
-            <p class="text-muted mb-0">${UnaPersona.mail}</p>
-          </div>
-          <div class="ms-3">
-          <button type="button" class="btn btn-danger " onclick="borrarUser('${UnaPersona.id}')">Borrar</button>
-          </div>
-        </div>`;
+      document.getElementById("F+" + posF).innerHTML += itemCreacion(UnaPersona);
       posF += 1;
     }
   });
   popover();
 }
+function itemCreacion(UnaPersona) {
+  return `<div id="${UnaPersona.id}" class=" d-flex align-items-center">
+            <img
+              data-bs-trigger="hover focus"
+              data-bs-container="body"
+              data-bs-toggle="popover"
+              data-bs-placement="right"
+              data-bs-html="true"
+              data-bs-content="
+              <ol >
+                <li>Telefono : ${UnaPersona.telefono}</li>
+                <li>Años de registro : ${UnaPersona.anioRegistro}</li>
+                <li>Pais : ${UnaPersona.pais}</li>
+              </ol>" 
+              title=" ${UnaPersona.titulo} ${UnaPersona.apellido} ${UnaPersona.nombre}"
+              src="${UnaPersona.imagen}"          
+              class="rounded-circle
+              border border-3 ${colores[getRandomInt(6)]}"
+            />
+            <div class="ms-3 col-5">
+              <h4 class="fw-bold mb-1">${UnaPersona.titulo} ${UnaPersona.apellido}</h4>
+              <p class="text-muted mb-0">${UnaPersona.mail}</p>            
+            </div>
+            <div class="ms-3">
+              <button type="button" class="btn btn-danger " onclick="borrarUser('${UnaPersona.id}')">Borrar</button>
+            </div>
+          </div>`;
+}
+
 async function CargaDeUsers() {
   registro.length = 0;
 
@@ -153,24 +127,34 @@ async function CargaDeUsers() {
     UnaPersona.pais = persona.location.country;
     registro.push(UnaPersona);
   });
+  //ordeno los usuarios primero todos los F y despues todos los M
+  registro.sort((a, b) => {
+    if (a.genero < b.genero) {
+      return -1;
+    }
+    if (a.genero > b.genero) {
+      return 1;
+    }
+    return 0;
+  });
   listarusers(registro);
+
   cargarCombo();
   /////////////////////////////////////////////////////
 }
 
-function filtrarporañio(pais = paisCombo) {
-  //let formregistrotiempo = document.forms["fregistrotiempo"];
+function filtrarAnioCombo(pais = paisCombo) {
   let anio = formregistrotiempo["registiempo"].value;
-  let regitroFiltroanio = [];
+  let registroFiltroanio = [];
 
-  regitroFiltroanio = registro.filter((persona) => persona.anioRegistro > anio && (persona.pais == pais || pais == undefined));
-  listarusers(regitroFiltroanio);
+  registroFiltroanio = registro.filter((persona) => persona.anioRegistro > anio && (persona.pais == pais || pais == undefined));
+  listarusers(registroFiltroanio);
   return false;
 }
 
 function borrarUser(id) {
   registro = registro.filter((persona) => persona.id != id);
-  filtrarporañio();
+  filtrarAnioCombo();
   cargarCombo();
 }
 
@@ -192,21 +176,28 @@ function filtrarporcombo(pais) {
 
   paisCombo === undefined ? (btnpais.innerHTML = "Filtar por pais") : (btnpais.innerHTML = paisCombo);
 
-  filtrarporañio(paisCombo);
+  filtrarAnioCombo(paisCombo);
 }
 
 function ordenarPorApellidoYNombreALosUsuarios(cuallista) {
   registro.sort((a, b) => {
-    if (a.nombre < b.nombre && a.genero == cuallista) {
-      return -1;
+    if (a.genero == cuallista && b.genero == cuallista) {
+      if (a.apellido < b.apellido) {
+        return -1;
+      } else if (a.apellido > b.apellido) {
+        return 1;
+      } else {
+        // a.apellido == b.apellido
+        if (a.nombre < b.nombre) {
+          return -1;
+        } else if (a.nombre > b.nombre) {
+          return 1;
+        } else {
+          return 0;
+        }
+      }
     }
-    if (a.nombre > b.nonbre && a.genero == cuallista) {
-      return 1;
-    }
-
-    // names must be equal
-    return 0;
   });
 
-  filtrarporañio();
+  filtrarAnioCombo();
 }
